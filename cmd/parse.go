@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/karchx/envtoyaml/pkg"
+	"github.com/karchx/envtoyaml/pkg/fs"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +17,8 @@ var (
 )
 
 func parseFileEnvs(cmd *cobra.Command, args []string) {
-	data := pkg.ReadFile(filePath)
-	pkg.CreateFile(extension, data)
+	data := fs.ReadFile(filePath)
+	fs.CreateFile(extension, data)
 }
 
 func init() {

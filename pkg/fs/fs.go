@@ -1,24 +1,14 @@
-package pkg
+package fs
 
 import (
-	"bufio"
-	"bytes"
-	"errors"
-	"io"
 	"os"
 	"regexp"
 	"strings"
 
 	log "github.com/gothew/l-og"
+	"github.com/karchx/envtoyaml/pkg/utils"
 	"gopkg.in/yaml.v3"
 )
-
-var filesExtensions []FilesType = []FilesType{
-	{
-		Extension: "yaml",
-		Output:    ".yaml",
-	},
-}
 
 func check(e error) {
 	if e != nil {
@@ -33,21 +23,20 @@ func ReadFile(path string) []byte {
 
 	defer file.Close()
 
-	data, err := ignoreComments(file)
-	log.Infof(string(data))
+	data, err := utils.IgnoreComments(file)
 	check(err)
 
 	return data
 }
 
 func CreateFile(extension string, data []byte) {
-	content := string(data)
+	content := utils.ParseBytesToString(data)
 	mapContent := parseMapString(&content)
 
 	writeContent, err := yaml.Marshal(&mapContent)
 	check(err)
 
-	extensionFile, err := checkExtension(extension)
+	extensionFile, err := utils.CheckExtension(extension)
 	check(err)
 	fileName := "output" + extensionFile
 	os.WriteFile(fileName, writeContent, 0644)
@@ -94,37 +83,4 @@ func getKeyOrValue(vector []string) ([]string, []string) {
 	}
 
 	return keys, values
-}
-
-func checkExtension(extension string) (string, error) {
-	var output string
-	for _, item := range filesExtensions {
-		if item.Extension == extension {
-			output = item.Output
-		}
-	}
-
-	if output == "" {
-		return output, errors.New("Extension not found")
-	}
-	return output, nil
-}
-
-func ignoreComments(file io.Reader) ([]byte, error) {
-	scanner := bufio.NewScanner(file)
-
-	var output bytes.Buffer
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if !strings.Contains(line, "#") {
-			output.WriteString(line + "\n")
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return output.Bytes(), nil
 }

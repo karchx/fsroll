@@ -1,4 +1,4 @@
-package pkg
+package models
 
 type FilesType struct {
 	Extension string
