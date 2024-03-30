@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/gothew/l-og v1.0.1
 	github.com/spf13/cobra v1.8.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
